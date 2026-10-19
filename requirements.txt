@@ -1,26 +1,37 @@
 adblockparser>=0.7,<1
-dnspython>=2.3.0,<3
-ExifRead>=2.3.2,<3
+dnspython>=2.6.1,<3
+ExifRead>=2.3.2,<4
 CherryPy>=18.8.0,<19
 cherrypy-cors>=1.6,<2
-Mako>=1.2.4,<2
+# 1.4.2 fixes the TemplateLookup path-traversal advisories (GHSA-5639-2j2p-m4mx).
+Mako>=1.4.2,<2
 beautifulsoup4>=4.11.2,<5
-lxml>=4.9.2,<5
+# PYSEC-2026-87 (CVE-2026-41066) is fixed in 6.1.0; 6.1.3 also closes
+# external parameter-entity resolution that 6.1.0 left on by default.
+lxml>=6.1.3,<7
 netaddr>=0.8.0,<1
 pysocks>=1.7.1,<2
-requests>=2.28.2,<3
+# 2.33.0 fixes GHSA-gc5v-m9x4-r6x2; 2.32.4 fixes the .netrc leak.
+requests>=2.33.0,<3
+# requests still allows urllib3>=1.26. 2.8.0 fixes the current urllib3 advisories.
+urllib3>=2.8.0,<3
 ipwhois>=1.1.0,<1.2.0
 ipaddr>=2.2.0,<3
 phonenumbers>=8.13.6,<9
 pygexf>=0.2.2,<0.3
 PyPDF2>=1.28.6,<2
 python-whois>=0.7.3,<0.8
+# secure 1.x/2.x replaced the header-builder API used by sfwebui.
 secure>=0.3.0,<0.4.0
-pyOpenSSL>=21.0.0,<22
+# 26.0.0 fixes PYSEC-2026-2268 / CVE-2026-27459; 26.1.0 fixes CVE-2026-40475.
+# 26.4.0 is required to accept cryptography 50.x.
+pyOpenSSL>=26.4.0,<27
 python-docx>=0.8.11,<0.9
 python-pptx>=0.6.21,<0.7
-networkx>=2.6.3,<2.7
-cryptography>=3.4.8,<4
+# 3.5+ supports Python 3.11-3.13. 3.7 requires Python >=3.12.
+networkx>=3.5,<3.7
+# Advisories in the 3.4.8 line are fixed across 39.0.1–49.0.0; 50.0.2 is current.
+cryptography>=50.0.2,<51
 publicsuffixlist>=0.9.3,<0.10
 openpyxl>=3.1.1,<4
-pyyaml>=6.0.0,<7
+pyyaml>=6.0.2,<7

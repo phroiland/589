@@ -19,6 +19,23 @@ from networkx.readwrite.gexf import GEXFWriter
 import phonenumbers
 
 
+def _open_package_text(package: str, resource: str):
+    """Open UTF-8 package data for reading.
+
+    importlib.resources.open_text() was removed in Python 3.13.
+
+    Args:
+        package (str): dotted package name
+        resource (str): file name within the package
+
+    Returns:
+        IO[str]: text file handle
+    """
+    return resources.files(package).joinpath(resource).open(
+        "r", encoding="utf-8", errors="ignore"
+    )
+
+
 if sys.version_info >= (3, 8):  # PEP 589 support (TypedDict)
     class _GraphNode(typing.TypedDict):
         id: str  # noqa: A003
@@ -360,7 +377,7 @@ class SpiderFootHelpers():
 
         for d in wordlists:
             try:
-                with resources.open_text('spiderfoot.dicts.ispell', f"{d}.dict", errors='ignore') as dict_file:
+                with _open_package_text('spiderfoot.dicts.ispell', f"{d}.dict") as dict_file:
                     for w in dict_file.readlines():
                         words.add(w.strip().lower().split('/')[0])
             except BaseException as e:
@@ -388,7 +405,7 @@ class SpiderFootHelpers():
 
         for d in wordlists:
             try:
-                with resources.open_text('spiderfoot.dicts.ispell', f"{d}.dict", errors='ignore') as dict_file:
+                with _open_package_text('spiderfoot.dicts.ispell', f"{d}.dict") as dict_file:
                     for w in dict_file.readlines():
                         words.add(w.strip().lower().split('/')[0])
             except BaseException as e:
@@ -416,7 +433,7 @@ class SpiderFootHelpers():
 
         for d in wordlists:
             try:
-                with resources.open_text('spiderfoot.dicts', f"{d}.txt", errors='ignore') as dict_file:
+                with _open_package_text('spiderfoot.dicts', f"{d}.txt") as dict_file:
                     for w in dict_file.readlines():
                         words.add(w.strip().lower().split('/')[0])
             except BaseException as e:
