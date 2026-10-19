@@ -66,13 +66,13 @@ class sfp_dnsbrute(SpiderFootPlugin):
             self.opts[opt] = userOpts[opt]
 
         if self.opts['commons']:
-            with importlib.resources.open_text('spiderfoot.dicts', 'subdomains.txt') as f:
+            with importlib.resources.files('spiderfoot.dicts').joinpath('subdomains.txt').open('r', encoding='utf-8') as f:
                 for s in f.readlines():
                     s = s.strip()
                     self.sublist[s] = True
 
         if self.opts['top10000']:
-            with importlib.resources.open_text('spiderfoot.dicts', 'subdomains-10000.txt') as f:
+            with importlib.resources.files('spiderfoot.dicts').joinpath('subdomains-10000.txt').open('r', encoding='utf-8') as f:
                 for s in f.readlines():
                     s = s.strip()
                     self.sublist[s] = True

@@ -969,7 +969,17 @@ class SpiderFoot:
         s = socket.socket()
         s.settimeout(int(timeout))
         s.connect((host, int(port)))
-        sock = ssl.wrap_socket(s)
+        # ssl.wrap_socket() was removed in Python 3.12. Match its historical
+        # defaults (no certificate verification). Send SNI for hostnames so
+        # name-based certificates are the ones presented.
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.check_hostname = False
+        # Certificate inspection must accept expired, mismatched, and self-signed certs.
+        context.verify_mode = ssl.CERT_NONE  # noqa: DUO122
+        server_hostname = None
+        if host and not self.validIP(host) and not self.validIP6(host):
+            server_hostname = host
+        sock = context.wrap_socket(s, server_hostname=server_hostname)
         sock.do_handshake()
         return sock
 
@@ -994,8 +1004,8 @@ class SpiderFoot:
         if isinstance(rawcert, str):
             rawcert = rawcert.encode('utf-8')
 
-        from cryptography.hazmat.backends.openssl import backend
-        cert = cryptography.x509.load_pem_x509_certificate(rawcert, backend)
+        # The backend argument was removed from cryptography's X.509 loaders.
+        cert = cryptography.x509.load_pem_x509_certificate(rawcert)
         sslcert = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, rawcert)
         sslcert_dump = OpenSSL.crypto.dump_certificate(OpenSSL.crypto.FILETYPE_TEXT, sslcert)
 
@@ -1114,7 +1124,7 @@ class SpiderFoot:
 
         ret = url
         for pat in pats:
-            ret = re.sub(pat, pats[pat], ret, re.IGNORECASE)
+            ret = re.sub(pat, pats[pat], ret, flags=re.IGNORECASE)
 
         return ret
 

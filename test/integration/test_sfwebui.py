@@ -22,7 +22,11 @@ class TestSpiderFootWebUiRoutes(helper.CPWebCase):
             '_internettlds': 'https://publicsuffix.org/list/effective_tld_names.dat',
             '_internettlds_cache': 72,
             '_genericusers': ",".join(SpiderFootHelpers.usernamesFromWordlists(['generic-usernames'])),
-            '__database': f"{SpiderFootHelpers.dataPath()}/spiderfoot.test.db",  # note: test database file
+            # Separate file per xdist worker; see test/conftest.py.
+            '__database': (
+                f"{SpiderFootHelpers.dataPath()}/spiderfoot.test."
+                f"{os.environ.get('PYTEST_XDIST_WORKER', 'gw0')}.db"
+            ),
             '__modules__': None,  # List of modules. Will be set after start-up.
             '__correlationrules__': None,  # List of correlation rules. Will be set after start-up.
             '_socks1type': '',
